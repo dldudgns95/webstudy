@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+
+  <style>
+    #box2 > img {
+      margin-right: 10px ;
+    }
+  </style>
+
+  <div id="box1"></div>
+
+  <script>
+    var str ='';
+    for(let i = 1; i <= 5; i++) {
+      str += i + '<br>';
+    }
+    document.getElementById('box1').innerHTML = str;
+  </script>
+
+  <hr>
+
+  <div id="box2"></div>
+  <script>
+    //animal1.jpg ~ animal10.jpg 한줄로 출력하기
+    var animal = '';
+    for(let i = 1; i <= 10; i++){
+      animal += '<img src="../../assets/image/animal' + i + '.jpg" width="100px">';
+    }
+    document.getElementById('box2').innerHTML = animal;
+
+  </script>
+
+  <hr>
+
+  <div id="box3"></div>
+  <!--
+  <select name="month">
+    <option value="">월 선택</option>
+    <option value="1">1월</option>
+    <option value="2">2월</option>
+    ...
+  </select>
+  -->
+  <script>
+    var str = '';
+    str += '<select name="month">';
+    str += '<option value="">월 선택</option>';
+    for(let i = 1; i <= 12; i++) {
+      str += '<option value="' + i + '">' + i +'월</option>'
+    }
+    str += '</select>'
+
+    document.getElementById('box3').innerHTML = str;
+  </script>
+  
+
+  <hr>
+
+  <div id="box4"></div>
+  <script>
+    var str = '';
+    var count = 1;
+    str += '<table border="1"><tbody>'
+    for(let i = 1; i <= 3; i++) {
+      str += '<tr>'
+      for(let j = 1; j <= 3; j++) {
+        str += '<td>' + count + '</td>';
+        count++;
+      }
+      str += '</tr>'
+    }
+    str += '</tbody></table>';
+
+    document.getElementById('box4').innerHTML = str;
+  </script>
+
+</body>
+</html>
