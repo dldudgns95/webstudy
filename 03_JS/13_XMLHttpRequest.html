@@ -86,6 +86,7 @@
             var str = '';
             var data = xhr.responseXML;
             var title = data.getElementsByTagName('title');
+            console.log(title);
             var author = data.getElementsByTagName('author');
             for(let i = 0; i < title.length; i++){
               str += '<ul>';
@@ -139,13 +140,171 @@
   <hr>
 
   <div class="wrap3">
-    <input type="button" value="JSON요청" id="btn_json_request">
-    <div id="json_response"></div>
+    <input type="button" value="JSON요청1" id="btn_json_request1">
+    <div id="json_response1"></div>
   </div>
 
   <script>
 
+    document.getElementById('btn_json_request1').addEventListener('click', function(){
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', 'book1.json', true);
+      xhr.send();
+      xhr.addEventListener('readystatechange', function(){
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            var data = JSON.parse(xhr.responseText); // data = 배열
+            var str = '';
+            for(let i = 0; i < data.length; i++){
+              str += '<ul>';
+              str += '<li>' + data[i].title + '</li>';    // data[i].title === data[i]['title']
+              str += '<li>' + data[i]["author"] + '</li>';
+              str += '</ul>';
+            }
+            document.getElementById('json_response1').innerHTML = str ;
+          }
+        }
+      })
+
+    })
+
   </script>
+
+  <hr>
+
+  <div class="wrap4">
+    <input type="button" value="JSON요청2" id="btn_json_request2">
+    <div id="json_response2"></div>
+  </div>
+
+  <script>
+
+    document.getElementById('btn_json_request2').addEventListener('click', function(){
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', 'book2.json', true);
+      xhr.send();
+      xhr.addEventListener('readystatechange', function(){
+      var str = '';
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            var data = JSON.parse(xhr.responseText).books;
+            console.log(data);
+            for(let book in data){
+              str += '<ul>';
+              str += '<li>' + data[book].title + '</li>';
+              str += '<li>' + data[book].author + '</li>';
+              str += '</ul>';
+            }
+            document.getElementById('json_response2').innerHTML = str;
+          }
+        }
+      })
+
+    })
+
+  </script>
+
+  <hr>
+
+  <!-- 크롬 확장 프로그램 | Test CORS 로 XMLHttpRequest URL 사용 가능 -->
+
+  <!-- 문제1. sfc_web_map.xml 읽어서 테이블로 표시하기(지역명, 날씨) -->
+  <div class="wrap5">
+    <table border="1">
+      <thead>
+        <tr>
+          <td>순번</td>
+          <td>지역명</td>
+          <td>날씨</td>
+          <td>온도</td>
+        </tr>
+      </thead>
+      <tbody id="sfc_web_map"></tbody>
+    </table>
+    <input type="button" value="날씨요청" id="btn_json_weather">
+    <div id="weather_response"></div>
+  </div>
+
+  <script>
+    document.getElementById('btn_json_weather').addEventListener('click', function(){
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', 'sfc_web_map.xml', true);
+      xhr.send();
+      xhr.addEventListener('readystatechange', function(){
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            var str = '';
+            var data = xhr.responseXML;
+            var local = data.getElementsByTagName('local');
+            for(let i = 0; i < local.length; i++){
+              str += '<tr>';
+              str += '<td>' + (i+1) + '</td>';
+              str += '<td>' + local[i].textContent + '</td>'; 
+              str += '<td>' + local[i].getAttribute('desc') + '</td>'; 
+              str += '<td>' + local[i].getAttribute('ta') + 'ºC' + '</td>'; 
+              str += '</tr>';
+            }
+            document.getElementById('sfc_web_map').innerHTML = str;
+          }
+        }
+      })
+    })
+  </script>
+
+  <hr>
+
+  <!-- 문제2. weather.json 읽어서 테이블로 표시하기(지역명: "서울, 인천, 경기도", 시간, 날씨, 최저온도, 최고온도) -->
+  
+  <div class="wrap6">
+    <div id = weather_city></div>
+    <input type="button" value="날씨읽기" id="btn_get_weather">
+    <input type="button" value="초기화" id="btn_reset">
+  </div>
+
+  <script>
+    document.getElementById('btn_get_weather').addEventListener('click', function(){  // 날씨읽기 버튼 누르면 실행
+      var xhr = new XMLHttpRequest();
+      xhr.open('get', 'weather.json', true);
+      xhr.send();
+      xhr.addEventListener('readystatechange', function(){
+        if(xhr.readyState === 4){
+          if(xhr.status === 200){
+            var data = JSON.parse(xhr.responseText);
+            var location = data.rss.channel.item.description.body.location;
+            var rowspan = 0;
+            var str = '';
+            str += '<table border="1"><thead><tr><td>지역명</td><td>도시</td><td>시간</td><td>날씨</td><td>최저온도</td><td>최고온도</td></tr></thead>';
+            str += '<tbody>';
+            for(let i = 0; i < location.length; i++){
+              if(location[i].province.startsWith('서울')){
+                var array = location[i].data;
+                rowspan += array.length;
+                for(let j = 0; j < array.length; j++){
+                  str += '<tr>';
+                  if(i === 0 && j === 0){
+                    str += '<td id="first_row">' + location[i].province + '</td>';
+                  }
+                  if(j === 0){str +='<td rowspan="' + array.length + '">' + location[i].city + '</td>';}
+                  str += '<td>' + array[j].tmEf + '</td>';
+                  str += '<td>' + array[j].wf + '</td>';
+                  str += '<td>' + array[j].tmn + 'ºC' + '</td>';
+                  str += '<td>' + array[j].tmx + 'ºC' + '</td>';
+                  str += '</tr>';
+                }
+              }
+            }
+            str += '</tbody></table>';
+            document.getElementById('weather_city').innerHTML = str;
+            document.getElementById('first_row').setAttribute('rowspan', rowspan)
+          }
+        }
+      })
+    })
+    document.getElementById('btn_reset').addEventListener('click', function(){  // 초기화 버튼 누르면 실행
+      document.getElementById('weather_city').innerHTML = '';
+    })
+  </script>
+
   
 </body>
 </html>
