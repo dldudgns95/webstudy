@@ -65,7 +65,12 @@
 
   <!-- window 객체 -->
   <div>
-    <input type="button" value="창열기" id="btn_open">
+    <label for="send_msg">전송메세지</label>
+    <input type="text" id="send_msg">
+    <input type="button" value="전송" id="btn_send">
+  </div>
+  <div>
+    <div id="receive_msg">받은 메세지는 여기에 표시됩니다.</div>
   </div>
   <script>
     /*
@@ -76,19 +81,51 @@
         1) 창의 크기 : width, height
         2) 창의 위치 : top, bottom, left, right
     */
-    
-    // 브라우저 화면의 정중앙에 창 열기, 창 크기는 640px * 480px
 
-    document.getElementById('btn_open').addEventListener('click', function(){
+    // 전역 객체(모든 함수에서 사용이 가능함)
+    var popup = null;
 
+    function openWindow(){
+      // 브라우저 화면의 정중앙에 창 열기, 창 크기는 640px * 480px
       var width = 640;
       var height = 480;
       var left = (screen.availWidth - width) / 2;
       var top = (screen.availHeight - height) / 2;
       var feature = 'width='+width + ', height=' + height + ', left=' + left + ', top=' + top;
-      window.open('11_regexpr.html', '', feature);
+      // 팝업이 열려있지 않으면 popup을 연다.
+      if(popup === null || popup.closed){
+        popup = window.open('12_popup.html', '', feature);
+      }
+    }
 
+    function sendMsg(){
+      // 12_popup.html 본문을 모두 읽은 뒤 스크립트를 처리할 수 있도록 load 이벤트를 사용함
+      // 12_browser_object.html     →      12_popup.html
+      //    <input id="send_msg">   →        <div id="receive_msg"></div>
+
+      // 고전 load 이벤트
+      popup.onload = function(){
+        popup.document.getElementById('receive_msg').textContent = document.getElementById('send_msg').value;
+      }
+
+      // 표준 load 이벤트
+      /*
+      popup.addEventListener('load', function(){
+        popup.document.getElementById('receive_msg').textContent = document.getElementById('send_msg').value;
+      })
+      */
+    }
+    
+   document.getElementById('btn_send').addEventListener('click', function(){
+      openWindow();
+      sendMsg();
     })
+
+    /*
+      부모창 : 부모창은 자식창을 변수에 담아서 변수명으로 호출한다.
+      자식창 : 자식창은 부모창을 opener로 호출한다.
+    */
+
   </script>
   
 </body>
