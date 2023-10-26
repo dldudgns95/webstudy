@@ -182,7 +182,9 @@
   </footer>
   <script>
     $('#id').keyup(function(){
-      if($(this).val().length < 4){
+      if($(this).val().length === 0){
+        $('#msg_id').text('').removeClass('warning').removeClass('good');
+      } else if($(this).val().length < 4){
         $('#msg_id').text('아이디는 4자 이상입니다.').addClass('warning').removeClass('good');
       } else{
         $('#msg_id').text('정상적인 아이디입니다.').addClass('good').removeClass('warning');
