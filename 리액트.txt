@@ -5,3 +5,4 @@ npx create-react-app 프로젝트이름
 npm uninstall -g create-react-app
 npm install -g create-react-app
 
+npm install react-router-dom
